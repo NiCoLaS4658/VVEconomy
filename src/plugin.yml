@@ -1,0 +1,21 @@
+name: VVEconomy
+main: fr.vaevictis.vveconomy.VVEconomy
+author: NiCoLaS4658
+version: 0.1
+
+commands:
+  argent:
+    description: Affiche la quantite d'argent possedee
+    usage: /<command> [joueur]
+    permission: vveconomy.basic
+    permission-message: Vous n'avez pas la permission de faire ceci.
+  payer:
+    description: Permet de payer un autre joueur
+    usage: /<command> <joueur> <argent>
+    permission: vveconomy.basic
+    permission-message: Vous n'avez pas la permission de faire ceci.
+  mettreargent:
+    description: Permet de changer l'argent d'un joueur
+    usage: /<command> <joueur> <argent>
+    permission: vveconomy.admin
+    permission-message: Vous n'avez pas la permission de faire ceci.

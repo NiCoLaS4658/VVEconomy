@@ -32,6 +32,64 @@ public class VVEconomy extends JavaPlugin
 		}
 		return Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("argent." + p.getName());
 	}
+	
+	public int getStock(int block)
+	{
+		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("stock." + block) == null)
+		{
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("stock." + block, 0);
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
+		}
+		return Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("stock." + block);
+	}
+	
+	public boolean setStock(int quantiteAchetee, int block)
+	{
+		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("stock." + block) == null)
+		{
+			return false;
+		}
+		else if (this.getStock(block) < quantiteAchetee)
+		{
+			return false;
+		}
+		else if (this.getStock(block) >= quantiteAchetee)
+		{
+			int stockActuel = this.getStock(block);
+			int stockApres = stockActuel - quantiteAchetee;
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("stock." + block, stockApres);
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
+			return true;
+		}
+		return false;
+	}
+	
+	public void setCurrency(int block, int currency)
+	{
+		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("currency." + block) == null)
+		{
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("currency." + block, 0);
+		}
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("currency." + block, currency);
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
+	}
+	
+	public int getCurrency(int block, int currency)
+	{
+		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("currency." + block) == null)
+		{
+			return -1;
+		}
+		return Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("currency." + block);
+	}
+		
+	public int getPrixAchat(int block, int quantite)
+	{
+		int prix = 0;
+		//TODO
+		return prix;
+	}
+	
 	public static void payer(Player p1, Player p2, int as)
 	{
 		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("argent." + p1.getName()) == null)

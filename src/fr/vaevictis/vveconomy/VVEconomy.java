@@ -2,6 +2,7 @@ package fr.vaevictis.vveconomy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,6 +22,63 @@ public class VVEconomy extends JavaPlugin
 	public void onDisable()
 	{
 		
+	}
+	
+	/*public int toId(String entree)
+	{
+		entree.toLowerCase();
+		switch (entree)
+		{
+		case "terre":
+			return 3;
+		case "cobblestone":
+			return 4;
+		case "stone":
+			return 1;
+		case "sable":
+			return 12;
+		case "sandstone":
+			return 24;
+		case "charbon":
+			return 263;
+		case "bois":
+			return 17;
+		}
+			
+	}*/
+	
+	public int getArgentBanque()
+	{
+		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("argentBanque") == null)
+		{
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("argentBanque", 0);
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
+		}
+		return Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("argentBanque");
+	}
+	
+	public void ajouterArgentBanque(int somme)
+	{
+		int argentActuel = this.getArgentBanque();
+		int argentApres = argentActuel + somme;
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("argentBanque", argentApres);
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
+	}
+	
+	public boolean soustraireArgentBanque(int somme)
+	{
+		int argentActuel = this.getArgentBanque();
+		int argentApres = argentActuel - somme;
+		if (argentApres >= 0)
+		{
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("argentBanque", argentApres);
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	public static int getArgent(Player p)
@@ -43,25 +101,38 @@ public class VVEconomy extends JavaPlugin
 		return Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("stock." + block);
 	}
 	
-	public boolean setStock(int quantiteAchetee, int block)
+	public boolean soustraireStock(int quantite, int block)
 	{
 		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("stock." + block) == null)
 		{
 			return false;
 		}
-		else if (this.getStock(block) < quantiteAchetee)
+		else if (this.getStock(block) < quantite)
 		{
 			return false;
 		}
-		else if (this.getStock(block) >= quantiteAchetee)
+		else if (this.getStock(block) >= quantite)
 		{
 			int stockActuel = this.getStock(block);
-			int stockApres = stockActuel - quantiteAchetee;
+			int stockApres = stockActuel - quantite;
 			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("stock." + block, stockApres);
 			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
 			return true;
-		}
+		}		
 		return false;
+	}
+	
+	public void ajouterStock(int quantite, int block)
+	{
+		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("stock." + block) == null)
+		{
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("stock." + block, 0);
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
+		}
+		int stockActuel = this.getStock(block);
+		int stockApres = stockActuel + quantite;
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("stock." + block, stockApres);
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
 	}
 	
 	public void setCurrency(int block, int currency)
@@ -74,7 +145,8 @@ public class VVEconomy extends JavaPlugin
 		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
 	}
 	
-	public int getCurrency(int block, int currency)
+	//Donne la valeur en as associée à un ID
+	public int getCurrency(int block)
 	{
 		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("currency." + block) == null)
 		{
@@ -82,12 +154,46 @@ public class VVEconomy extends JavaPlugin
 		}
 		return Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("currency." + block);
 	}
-		
-	public int getPrixAchat(int block, int quantite)
+	
+	//Donne la valeur que devra payer le client pour acheter la quantite de blocs qu'il a demandé
+	public int getPrixAchat(int block)
 	{
-		int prix = 0;
-		//TODO
-		return prix;
+		int currency = this.getCurrency(block);
+		int stock = this.getStock(block);
+		int prix = ((-(3/172) * currency * stock) + ((4 * currency) + ((3/172) * currency))) * 4;
+		if (currency == -1)
+		{
+			return -1;
+		}
+		else if (prix <= 1)
+		{
+			return 1;
+		}
+		else
+		{
+			return prix;
+		}
+	}
+	
+	//Donne la valeur que devra payer la banque au client lui vendant des blocs
+	public int getPrixVente(int block)
+	{
+		int currency = this.getCurrency(block);
+		int stock = this.getStock(block);
+		int prix = (-(3/172) * currency * stock) + ((4 * currency) + ((3/172) * currency));
+		if (currency == -1)
+		{
+			return -1;
+		}
+		else if (prix <= 1)
+		{
+			return 1;
+		}
+		else
+		{
+			return prix;
+		}
+	
 	}
 	
 	public static void payer(Player p1, Player p2, int as)

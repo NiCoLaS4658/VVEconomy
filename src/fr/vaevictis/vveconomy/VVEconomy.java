@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class VVEconomy extends JavaPlugin
@@ -46,6 +47,7 @@ public class VVEconomy extends JavaPlugin
 		}
 			
 	}*/
+	
 	
 	public int getArgentBanque()
 	{
@@ -91,75 +93,75 @@ public class VVEconomy extends JavaPlugin
 		return Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("argent." + p.getName());
 	}
 	
-	public int getStock(int block)
+	public int getStock(ItemStack item)
 	{
-		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("stock." + block) == null)
+		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("stock." + item.getType().toString()) == null)
 		{
-			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("stock." + block, 0);
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("stock." + item.getType().toString(), 0);
 			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
 		}
-		return Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("stock." + block);
+		return Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("stock." + item.getType().toString());
 	}
 	
-	public boolean soustraireStock(int quantite, int block)
+	public boolean soustraireStock(int quantite, ItemStack item)
 	{
-		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("stock." + block) == null)
+		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("stock." + item.getType().toString()) == null)
 		{
 			return false;
 		}
-		else if (this.getStock(block) < quantite)
+		else if (this.getStock(item) < quantite)
 		{
 			return false;
 		}
-		else if (this.getStock(block) >= quantite)
+		else if (this.getStock(item) >= quantite)
 		{
-			int stockActuel = this.getStock(block);
+			int stockActuel = this.getStock(item);
 			int stockApres = stockActuel - quantite;
-			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("stock." + block, stockApres);
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("stock." + item.getType().toString(), stockApres);
 			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
 			return true;
 		}		
 		return false;
 	}
 	
-	public void ajouterStock(int quantite, int block)
+	public void ajouterStock(int quantite, ItemStack item)
 	{
-		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("stock." + block) == null)
+		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("stock." + item.getType().toString()) == null)
 		{
-			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("stock." + block, 0);
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("stock." + item.getType().toString(), 0);
 			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
 		}
-		int stockActuel = this.getStock(block);
+		int stockActuel = this.getStock(item);
 		int stockApres = stockActuel + quantite;
-		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("stock." + block, stockApres);
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("stock." + item.getType().toString(), stockApres);
 		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
 	}
 	
-	public void setCurrency(int block, int currency)
+	public void setCurrency(ItemStack item, int currency)
 	{
-		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("currency." + block) == null)
+		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("currency." + item.getType().toString()) == null)
 		{
-			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("currency." + block, 0);
+			Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("currency." + item.getType().toString(), 0);
 		}
-		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("currency." + block, currency);
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("currency." + item.getType().toString(), currency);
 		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
 	}
 	
 	//Donne la valeur en as associée à un ID
-	public int getCurrency(int block)
+	public int getCurrency(ItemStack item)
 	{
-		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("currency." + block) == null)
+		if (Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("currency." + item.getType().toString()) == null)
 		{
 			return -1;
 		}
-		return Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("currency." + block);
+		return Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("currency." + item.getType().toString());
 	}
 	
 	//Donne la valeur que devra payer le client pour acheter la quantite de blocs qu'il a demandé
-	public int getPrixAchat(int block)
+	public int getPrixAchat(ItemStack item)
 	{
-		int currency = this.getCurrency(block);
-		int stock = this.getStock(block);
+		int currency = this.getCurrency(item);
+		int stock = this.getStock(item);
 		int prix = ((-(3/172) * currency * stock) + ((4 * currency) + ((3/172) * currency))) * 4;
 		if (currency == -1)
 		{
@@ -176,10 +178,10 @@ public class VVEconomy extends JavaPlugin
 	}
 	
 	//Donne la valeur que devra payer la banque au client lui vendant des blocs
-	public int getPrixVente(int block)
+	public int getPrixVente(ItemStack item)
 	{
-		int currency = this.getCurrency(block);
-		int stock = this.getStock(block);
+		int currency = this.getCurrency(item);
+		int stock = this.getStock(item);
 		int prix = (-(3/172) * currency * stock) + ((4 * currency) + ((3/172) * currency));
 		if (currency == -1)
 		{
@@ -229,7 +231,7 @@ public class VVEconomy extends JavaPlugin
 	{
 		Player p = (Player) sender;
 		
-		if (label.equalsIgnoreCase("argent"))
+		if (label.equalsIgnoreCase("argent") && p.hasPermission("vveconomy.basic"))
 		{
 			if (args.length == 0)
 			{
@@ -245,7 +247,7 @@ public class VVEconomy extends JavaPlugin
 				}
 			}
 		}
-		else if (label.equalsIgnoreCase("payer") && args.length == 2)
+		else if (label.equalsIgnoreCase("payer") && args.length == 2 && p.hasPermission("vveconomy.basic"))
 		{
 			Player p2 = Bukkit.getServer().getPlayer(args[0]);
 			if (p2 != null && Integer.valueOf(args[1]) > 0)
@@ -261,7 +263,7 @@ public class VVEconomy extends JavaPlugin
 				return true;
 			}
 		}
-		else if (label.equalsIgnoreCase("mettreargent") && args.length == 2)
+		else if (label.equalsIgnoreCase("mettreargent") && args.length == 2 && p.hasPermission("vveconomy.admin"))
 		{
 			Player p2 = Bukkit.getServer().getPlayer(args[0]);
 			if(p2 != null && Integer.valueOf(args[1]) > 0)
@@ -271,7 +273,91 @@ public class VVEconomy extends JavaPlugin
 				return true;
 			}
 		}
+		else if (label.equalsIgnoreCase("banque" ) && p.hasPermission("vveconomy.basic"))
+		{
+			if (args[0].equalsIgnoreCase("tp"))
+					{
+				//TODO tp à la banque
+					}
+			else if (args[0].equalsIgnoreCase("vendre"))
+			{
+				//TODO vendre à la banque
+				if (p.getItemInHand().getType() == Material.STONE || p.getItemInHand().getType() == Material.DIRT || p.getItemInHand().getType() == Material.COBBLESTONE || p.getItemInHand().getType() == Material.SAND || p.getItemInHand().getType() == Material.SANDSTONE || p.getItemInHand().getType() == Material.OBSIDIAN || p.getItemInHand().getType() == Material.NETHER_BRICK || p.getItemInHand().getType() == Material.NETHERRACK || p.getItemInHand().getType() == Material.GLOWSTONE_DUST || p.getItemInHand().getType() == Material.SOUL_SAND || p.getItemInHand().getType() == Material.REDSTONE  && p.getItemInHand().getAmount() == 64)
+				{
+					int prixVente = this.getPrixVente(p.getItemInHand());
+					if (this.soustraireArgentBanque(prixVente) == true)
+					{
+						this.ajouterStock(64, p.getItemInHand());
+						p.setItemInHand(new ItemStack(0));
+						int argentJoueurActuel = VVEconomy.getArgent(p);
+						int argentJoueur = argentJoueurActuel + prixVente;
+						VVEconomy.setArgent(p, argentJoueur);
+					}
+					else
+					{
+						p.sendMessage(ChatColor.GOLD + "La banque ne dispose pas d'assez d'argent pour acheter vos biens");
+					}
+				
+				}
+				else if (p.getItemInHand().getType() == Material.COAL || p.getItemInHand().getType() == Material.IRON_INGOT || p.getItemInHand().getType() == Material.GOLD_INGOT && p.getItemInHand().getAmount() >= 16)
+				{
+					int prixVente = this.getPrixVente(p.getItemInHand());
+					if (this.soustraireArgentBanque(prixVente) == true)
+					{
+						this.ajouterStock(16, p.getItemInHand());
+						int reste = p.getItemInHand().getAmount() - 16;
+						p.setItemInHand(new ItemStack(p.getItemInHand().getType(), reste));
+						int argentJoueurActuel = VVEconomy.getArgent(p);
+						int argentJoueur = argentJoueurActuel + prixVente;
+						VVEconomy.setArgent(p, argentJoueur);
+					}
+					else
+					{
+						p.sendMessage(ChatColor.GOLD + "La banque ne dispose pas d'assez d'argent pour acheter vos biens");
+					}
+				}
+				else if (p.getItemInHand().getType() == Material.DIAMOND)
+				{
+					int prixVente = this.getPrixVente(p.getItemInHand());
+					if (this.soustraireArgentBanque(prixVente) == true)
+					{
+						this.ajouterStock(1, p.getItemInHand());
+						int reste = p.getItemInHand().getAmount() - 1;
+						p.setItemInHand(new ItemStack(p.getItemInHand().getType(), reste));
+						int argentJoueurActuel = VVEconomy.getArgent(p);
+						int argentJoueur = argentJoueurActuel + prixVente;
+						VVEconomy.setArgent(p, argentJoueur);
+					}
+					else
+					{
+						p.sendMessage(ChatColor.GOLD + "La banque ne dispose pas d'assez d'argent pour acheter vos biens");
+					}
+					
+				}
+				else
+				{
+					p.sendMessage(ChatColor.GOLD + "Vous ne pouvez pas vendre cet objet à la banque");
+				}
+				
+			}
+			else
+			{
+				p.sendMessage(ChatColor.GOLD + "Les arguments disponibles pour la banque sont :\n - tp : pour vous rendre à la banque (achat)\n - vendre : pour vendre ce que vous avez dans la main");
+			}
 			
+			return true;
+		
+		}
+		
+		//ATTENTION UNIQUEMENT FAIT PAR DES GENS QUI CONNAISSENT LE CODE : IL FAUT AVOIR UN ITEM COMPATIBLE EN MAIN ET SURTOUT NE PAS ENTRER AUTRE CHOSE QU'UN INT EN ARGUMENT
+		else if (label.equalsIgnoreCase("mettrecurrency") && p.hasPermission("vveconomy.admin"))
+		{
+			if (args.length == 1)
+			{
+				this.setCurrency(p.getItemInHand(), Integer.parseInt(args[0]));
+			}
+			return true;
+		}
 		return false;
 	}
 }

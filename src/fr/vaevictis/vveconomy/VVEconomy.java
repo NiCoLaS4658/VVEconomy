@@ -1,5 +1,8 @@
 package fr.vaevictis.vveconomy;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -17,7 +20,7 @@ public class VVEconomy extends JavaPlugin
 	@Override
 	public void onEnable()
 	{
-		
+		HashSet<String, Location> JoueurInBank = new HashSet<String, Location>();
 	}
 	
 	@Override
@@ -105,7 +108,13 @@ public class VVEconomy extends JavaPlugin
 	//TODO � v�rifier (getWorld � besoin d'une Chaine et il obtient un Object pour le moment)
 	public Location getBanqueLocation()
 	{
-		Location pos = new Location(Bukkit.getServer().getWorld(Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("banqueWorld")), Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("banqueX"), Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("banqueY"), Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().get("banqueZ"));
+		int x = Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("banqueX");
+		double xdouble = (double) x;
+		int y = Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("banqueY");
+		double ydouble = (double) y;
+		int z = Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("banqueZ");
+		double zdouble = (double) z;
+		Location pos = new Location(Bukkit.getServer().getWorld(Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getString("banqueWorld")), xdouble, ydouble, zdouble);
 		return pos;
 	}
 	

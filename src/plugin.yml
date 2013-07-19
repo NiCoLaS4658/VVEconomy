@@ -1,6 +1,6 @@
 name: VVEconomy
 main: fr.vaevictis.vveconomy.VVEconomy
-author: NiCoLaS4658
+authors: [NiCoLaS4658, Effilol]
 version: 0.1
 
 commands:
@@ -18,4 +18,29 @@ commands:
     description: Permet de changer l'argent d'un joueur
     usage: /<command> <joueur> <argent>
     permission: vveconomy.admin
+    permission-message: Vous n'avez pas la permission de faire ceci.
+  banque:
+    description: Permet d'interagir avec la banque
+    usage: /<command> <tp|quitter|vendre>
+    permission: vveconomy.basic
+    permission-message: Vous n'avez pas la permission de faire ceci.
+  mettrecurrency:
+    description: Permet de definir le cours d'un item. ATTENTION
+    usage: /<command> <cours>
+    permission: vveconomy.admin
+    permission-message: Vous n'avez pas la permission de faire ceci.
+  setbanque:
+    description: Permet de definir la position de la banque (pour la tp nottament)
+    usage: /<command>
+    permission: vveconomy.admin
+    permission-message: Vous n'avez pas la permission de faire ceci.
+  ajouterargentbanque:
+    description: Ajoute des fonds a la banque
+    usage: /<command> <fondsaajouter>
+    permission: vveconomy.admin
+    permission-message: Vous n'avez pas la permission de faire ceci.
+  prixvente:
+    description: Donne le prix qui serait rapporte par une vente a la banque
+    usage: /<command>
+    permission: vveconomy.basic
     permission-message: Vous n'avez pas la permission de faire ceci.

@@ -1,7 +1,7 @@
 name: VVEconomy
 main: fr.vaevictis.vveconomy.VVEconomy
 authors: [NiCoLaS4658, Effilol]
-version: 0.1
+version: 1.0
 
 commands:
   argent:

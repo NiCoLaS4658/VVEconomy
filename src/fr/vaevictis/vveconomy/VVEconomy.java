@@ -1,22 +1,27 @@
 package fr.vaevictis.vveconomy;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.block.Sign;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-
+@SuppressWarnings("unused")
 public class VVEconomy extends JavaPlugin
 {
 	
 	public static Hashtable<String, Location> joueursInBank;
+	//public static ArrayList<Location> signsBanque;
 	
 	@Override
 	public void onEnable()
@@ -24,14 +29,109 @@ public class VVEconomy extends JavaPlugin
 		joueursInBank = new Hashtable<String, Location>();
 		PluginManager pm = getServer().getPluginManager();		
 		pm.registerEvents(new VVEconomyListener(this), this);
+		
+		/*signsBanque = new ArrayList<Location>();
+		for(int i = 0; i < Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("longueurChaineSigns"); i++)
+		{
+			signsBanque.add(this.getSignsLocation(i));
+		}
+		VVEconomy.refreshSigns();*/
 	}
 	
 	@Override
 	public void onDisable()
 	{
-		
+		/*for(int i = 0; i < signsBanque.size(); i++)
+		{
+			this.saveSign(signsBanque.get(i), i);
+		}
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("longueurChaineSigns", signsBanque.size());
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();*/
 	}
 	
+	/*public static void refreshSigns()
+	{
+		for(int i = 0; i < signsBanque.size(); i++)
+		{
+			//signsBanque.get(i).getBlock().setType(Material.AIR);
+			//signsBanque.get(i).getBlock().setType(Material.WALL_SIGN);
+			Sign sign = VVEconomy.returnSignFromBlock(signsBanque.get(i).getBlock());
+			Block attachedBlock = signsBanque.get(i).getBlock().getRelative(VVEconomy.signFacing(sign));
+			
+			if (attachedBlock.getType() == Material.STONE || attachedBlock.getType() == Material.DIRT || attachedBlock.getType() == Material.COBBLESTONE || attachedBlock.getType() == Material.SAND || attachedBlock.getType() == Material.SANDSTONE || attachedBlock.getType() == Material.OBSIDIAN || attachedBlock.getType() == Material.NETHER_BRICK || attachedBlock.getType() == Material.NETHERRACK ||  attachedBlock.getType() == Material.SOUL_SAND)
+			{
+				sign.setLine(0, attachedBlock.getType().toString());
+				sign.setLine(1, VVEconomy.getStock(new ItemStack(attachedBlock.getType())) + "");
+				sign.setLine(2, VVEconomy.getPrixAchat(new ItemStack(attachedBlock.getType())) + " As");
+				sign.update();				
+			}
+			//bloc de charbon
+			else if (attachedBlock.getTypeId() == 233  || attachedBlock.getType() == Material.IRON_BLOCK || attachedBlock.getType() == Material.GOLD_BLOCK)
+			{
+				sign.setLine(0, VVEconomy.renvoiIngot(new ItemStack(attachedBlock.getType())).toString());
+				sign.setLine(1, VVEconomy.getStock(VVEconomy.renvoiIngot(new ItemStack(attachedBlock.getType()))) + "");
+				sign.setLine(2, VVEconomy.getPrixAchat(VVEconomy.renvoiIngot(new ItemStack(attachedBlock.getType()))) + " As");
+				sign.update();
+			}
+			else if (attachedBlock.getType() == Material.DIAMOND_BLOCK)
+			{
+				sign.setLine(0, "DIAMOND");
+				sign.setLine(1, VVEconomy.getStock(new ItemStack(Material.DIAMOND)) + "");
+				sign.setLine(2, VVEconomy.getPrixAchat(new ItemStack(Material.DIAMOND)) + " As");
+				sign.update();
+			}
+			else if (attachedBlock.getType() == Material.GLOWSTONE)
+			{
+				sign.setLine(0, "GLOWSTONE_DUST");
+				sign.setLine(1, VVEconomy.getStock(new ItemStack(Material.GLOWSTONE_DUST)) + "");
+				sign.setLine(2, VVEconomy.getPrixAchat(new ItemStack(Material.GLOWSTONE_DUST)) + " As");
+				sign.update();
+			}
+			//bloc de redstone
+			else if (attachedBlock.getTypeId() == 224)
+			{
+				sign.setLine(0, "REDSTONE");
+				sign.setLine(1, VVEconomy.getStock(new ItemStack(Material.REDSTONE)) + "");
+				sign.setLine(2, VVEconomy.getPrixAchat(new ItemStack(Material.REDSTONE)) + " As");
+				sign.update();
+			}
+			
+		}
+	}
+	
+	// -------------------------METHODES POUR UTILISER LES PANNEAUX---------------------------
+	public static BlockFace signFacing(Sign sign)
+	{
+		org.bukkit.material.Sign signData = (org.bukkit.material.Sign) sign.getData();
+        return signData.getAttachedFace();
+	}
+	
+	public static Sign returnSignFromBlock(Block block)
+	{
+		return (Sign) block.getState();
+	}
+	
+	public Location getSignsLocation(int numero)
+	{
+		int x = Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("sign" + numero + "X");
+		double xdouble = (double) x;
+		int y = Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("sign" + numero + "X");
+		double ydouble = (double) y;
+		int z = Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getInt("sign" + numero + "X");
+		double zdouble = (double) z;
+		Location pos = new Location(Bukkit.getServer().getWorld(Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().getString("sign" + numero + "World")), xdouble, ydouble, zdouble);
+		return pos;
+	}
+	
+	public void saveSign(Location loc, int numero)
+	{
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("sign" + numero + "World", loc.getWorld().getName());
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("sign" + numero + "X", loc.getX());
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("sign" + numero + "Y", loc.getY());
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("sign" + numero + "Z", loc.getZ());
+		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
+	}
+	//----------------------------------------------------------------------------------------------*/
 	public static ItemStack renvoiIngot(ItemStack clickedBlock)
 	{
 		if (clickedBlock.getTypeId() == 233)
@@ -166,7 +266,7 @@ public class VVEconomy extends JavaPlugin
 	{
 		int currency = VVEconomy.getCurrency(item);
 		int stock = VVEconomy.getStock(item);
-		int prix = ((-(3/172) * currency * stock) + ((4 * currency) + ((3/172) * currency))) * 4;
+		int prix = (-(3/172) * currency * stock) + ((4 * currency) + ((3/172) * currency));
 		if (currency == -1)
 		{
 			return -1;
@@ -190,7 +290,7 @@ public class VVEconomy extends JavaPlugin
 	{
 		int currency = VVEconomy.getCurrency(item);
 		int stock = VVEconomy.getStock(item);
-		int prix = (-(3/172) * currency * stock) + ((4 * currency) + ((3/172) * currency));
+		int prix = ((-(3/172) * currency * stock) + ((4 * currency) + ((3/172) * currency)))/4;
 		if (currency == -1)
 		{
 			return -1;
@@ -237,6 +337,22 @@ public class VVEconomy extends JavaPlugin
 		}
 		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").getConfig().set("argent." + p.getName(), as);
 		Bukkit.getServer().getPluginManager().getPlugin("VVEconomy").saveConfig();
+	}
+	public static boolean ThereIsAStackWithLessThanXItemsInTheInventory(Player p, ItemStack ItemSearched, int x)
+	{
+		ItemStack[] inventory = p.getInventory().getContents();
+		boolean b = false;
+		for(int i = 0; i < inventory.length; i++)
+		{
+			if (inventory[i].getType() == ItemSearched.getType())
+			{
+				if (inventory[i].getAmount() <= x)
+				{
+					b = true;
+				}
+			}
+		}
+		return b;
 	}
 	
 	public boolean onCommand(CommandSender sender, Command command, String label,String[] args)
@@ -320,6 +436,7 @@ public class VVEconomy extends JavaPlugin
 								int argentJoueurActuel = VVEconomy.getArgent(p);
 								int argentJoueur = argentJoueurActuel + prixVente;
 								VVEconomy.setArgent(p, argentJoueur);
+								//VVEconomy.refreshSigns();
 							}
 							else
 							{
@@ -363,6 +480,7 @@ public class VVEconomy extends JavaPlugin
 								int argentJoueurActuel = VVEconomy.getArgent(p);
 								int argentJoueur = argentJoueurActuel + prixVente;
 								VVEconomy.setArgent(p, argentJoueur);
+								//VVEconomy.refreshSigns();
 							}
 							else
 							{
@@ -406,6 +524,7 @@ public class VVEconomy extends JavaPlugin
 								int argentJoueurActuel = VVEconomy.getArgent(p);
 								int argentJoueur = argentJoueurActuel + prixVente;
 								VVEconomy.setArgent(p, argentJoueur);
+								//VVEconomy.refreshSigns();
 							}
 						}
 						else
@@ -444,6 +563,7 @@ public class VVEconomy extends JavaPlugin
 			if (args.length == 1)
 			{
 				this.setCurrency(p.getItemInHand(), Integer.parseInt(args[0]));
+				//VVEconomy.refreshSigns();
 			}
 			else
 			{
